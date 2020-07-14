@@ -12,10 +12,10 @@ BIRD_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bi
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
-
 STAT_FONT = pygame.font.SysFont("comicsans", 50)
 
 GEN = 0
+
 class Bird:
     IMGS = BIRD_IMGS
     MAX_ROTATION = 25
@@ -91,12 +91,10 @@ class Pipe:
         self.x = x
         self.height = 0
         self.gap = 100
-
         self.top = 0
         self.bottom = 0
         self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True)
         self.PIPE_BOTTOM = PIPE_IMG
-
         self.passed = False
         self.set_height()
 
@@ -116,10 +114,8 @@ class Pipe:
         bird_mask = bird.get_mask()
         top_mask = pygame.mask.from_surface(self.PIPE_TOP)
         bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
-
         top_offset = (self.x - bird.x, self.top - round(bird.y))
         bottom_offset = (self.x - bird.x, self.bottom - round(bird.y))
-
         b_point = bird_mask.overlap(bottom_mask, bottom_offset)
         t_point = bird_mask.overlap(top_mask, top_offset)
 
@@ -148,6 +144,7 @@ class Base:
 
         if self.x2 + self.WIDTH < 0:
             self.x2 = self.x1 + self.WIDTH
+
     def draw(self, win):
         win.blit(self.IMG, (self.x1, self.y))
         win.blit(self.IMG, (self.x2, self.y))
@@ -184,12 +181,10 @@ def main(genomes, config):
         g.fitness = 0
         ge.append(g)
 
-
     base = Base(730)
     pipes = [Pipe(600)]
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     clock = pygame.time.Clock()
-
     score = 0
 
     run = True
@@ -202,6 +197,7 @@ def main(genomes, config):
                 quit()
 
         pipe_ind = 0
+
         if len(birds) > 0:
             if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].PIPE_TOP.get_width():
                 pipe_ind = 1
@@ -212,7 +208,6 @@ def main(genomes, config):
         for x, bird in enumerate(birds):
             bird.move()
             ge[x].fitness += 0.1
-
             output = nets[x].activate((bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
 
             if output[0] > 0.5:
@@ -227,7 +222,6 @@ def main(genomes, config):
                     birds.pop(x)
                     nets.pop(x)
                     ge.pop(x)
-
 
                 if not pipe.passed and pipe.x < bird.x:
                     pipe.passed = True
@@ -254,11 +248,8 @@ def main(genomes, config):
                 nets.pop(x)
                 ge.pop(x)
 
-                
-
         base.move()
         draw_window(win, birds, pipes, base, score, GEN)
-
 
 def run(config_path):
     #import pickle
